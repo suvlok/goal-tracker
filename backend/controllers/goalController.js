@@ -67,5 +67,3 @@ module.exports = {
     updateGoal,
     deleteGoal
 }
-
-//29:50
