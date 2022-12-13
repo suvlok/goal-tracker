@@ -1,33 +1,37 @@
-const jwt = require("jsonwebtoken")
-const asyncHandler = require("express-async-handler")
-const User = require(".../models/userModel")
 
-const protect = asyncHandler(async(req, res, next) => {
-    let token
+const jwt = require('jsonwebtoken')
+const asyncHandler = require('express-async-handler')
+const User = require('../models/userModel')
 
-    if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")){
-        try {
-            //Get token from the header
-            token = req.headers.authorization.split(' ')[1] //you turn it into an array and splits the bearer part from the token, then you retrive the token part
+const protect = asyncHandler(async (req, res, next) => {
+  let token
 
-            //Verify the token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET)
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer') // we need to see if it starts with this word
+  ) {
+    try {
+      // Get token from header
+      token = req.headers.authorization.split(' ')[1]
 
-            //Get user from the token
-            req.user = await User.findById(decoded.id).select("-password") //we dont get the password
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-            next()
-        } catch (error) {
-            console.log(error)
-            res.status(401)
-            throw new Error("Not authorized")
-        }
+      // Get user from the token
+      req.user = await User.findById(decoded.id).select('-password')
+
+      next()
+    } catch (error) {
+      console.log(error)
+      res.status(401)
+      throw new Error('Not authorized')
     }
+  }
 
-    if(!token){
-        res.status(401)
-        throw new Error("Not authorized as there is no token")
-    }
+  if (!token) {
+    res.status(401)
+    throw new Error('Not authorized, no token')
+  }
 })
 
 module.exports = { protect }
