@@ -74,13 +74,8 @@ const loginUser = asyncHandler(async(req, res) => {
 // @route  GET /api/users/me
 // @access Private 
 const getMe = asyncHandler(async(req, res) => { //displays the users information when logging in
-    const { _id, name , email } = await User.findById(req.user.id)
 
-    res.status(200).json({
-        id: _id,
-        name,
-        email
-    })
+    res.status(200).json(req.user)
 })
 
 //Generate a token (JWT)
